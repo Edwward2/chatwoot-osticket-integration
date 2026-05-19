@@ -1,185 +1,195 @@
-# Chatwoot + osTicket Integration
+Chatwoot + osTicket Integration
 
 Integración automática entre Chatwoot y osTicket utilizando Node.js.
 
-El sistema recibe conversaciones desde Chatwoot mediante Webhooks y crea tickets automáticamente en osTicket cuando la conversación es cerrada o resuelta.
+Este proyecto implementa un servicio de integración en tiempo real que recibe eventos desde Chatwoot mediante Webhooks, procesa la conversación, construye un transcript limpio y crea automáticamente tickets en osTicket cuando la conversación es cerrada o resuelta.
 
----
+------------------------------------------------------------
+ARQUITECTURA
+------------------------------------------------------------
 
-# Arquitectura
+Chatwoot → Webhook → Node.js Integration Service → osTicket API
 
-Chatwoot
-↓
-Webhook
-↓
-Node.js Integration Service
-↓
-osTicket API
+------------------------------------------------------------
+COMPONENTES
+------------------------------------------------------------
 
----
-
-# Componentes
-
-## Chatwoot
+CHATWOOT
 
 Sistema principal de atención por chat.
 
 Sitio oficial:
 https://www.chatwoot.com
 
-Nota sobre Chatwoot
+NOTA IMPORTANTE:
+La carpeta chatwoot/ no está incluida completamente en este repositorio.
 
-La carpeta chatwoot/ no se incluye completamente en este repositorio debido a que corresponde al proyecto oficial de Chatwoot, el cual posee su propio repositorio Git, múltiples servicios Docker y dependencias de gran tamaño.
+Esto se debe a que Chatwoot es un sistema completo con múltiples servicios Docker, dependencias pesadas y su propio repositorio oficial:
 
-Este repositorio se enfoca específicamente en el desarrollo del Integration Service encargado de conectar Chatwoot con osTicket mediante Webhooks y API REST.
+https://github.com/chatwoot/chatwoot
 
----
+Este proyecto se enfoca únicamente en la integración personalizada entre Chatwoot y osTicket.
 
-## osTicket
+------------------------------------------------------------
 
-Sistema de tickets utilizado para almacenar las conversaciones cerradas.
+OSTICKET
+
+Sistema de tickets utilizado como backend de soporte.
 
 Sitio oficial:
 https://osticket.com
 
----
+------------------------------------------------------------
 
-## Integration Service
+INTEGRATION SERVICE (NODE.JS)
 
-Servicio Node.js encargado de:
+Servicio principal del proyecto.
 
-- recibir webhooks
-- limpiar mensajes
-- construir transcript
-- transformar payload
-- enviar tickets a osTicket
+Responsable de:
+
+- Recibir webhooks desde Chatwoot
+- Normalizar y sanitizar mensajes
+- Construir transcript de conversación
+- Detectar cierre de conversación
+- Enviar ticket a osTicket vía API REST
 
 Archivos principales:
 
 - server.js
 - sender.js
 
----
+------------------------------------------------------------
+ESTRUCTURA DEL PROYECTO
+------------------------------------------------------------
 
-# Estructura del proyecto
-
-```bash
 proyecto_chatwoot/
-│
-├── chatwoot/
-├── Osticket/
+
+├── chatwoot/                  (NO incluido - proyecto externo)
+├── Osticket/                  (Docker setup osTicket)
+
 ├── integration-service/
 │   ├── server.js
 │   ├── sender.js
 │   ├── package.json
 │   └── package-lock.json
-│
+
 ├── test_chat.html
 ├── .gitignore
 └── README.md
-```
 
----
+------------------------------------------------------------
+REQUISITOS
+------------------------------------------------------------
 
-# Requisitos
-
-- Node.js
+- Node.js 18+
 - Docker
 - Docker Compose
-- Chatwoot
-- osTicket
+- Git
 
----
+------------------------------------------------------------
+VARIABLES DE ENTORNO
+------------------------------------------------------------
 
-# Variables de entorno
+Ubicación:
 
-Crear archivo `.env` dentro de:
-
-```bash
-integration-service/
-```
+integration-service/.env
 
 Contenido:
 
-```env
 PORT=3001
 OSTICKET_API_KEY=TU_API_KEY
-```
 
----
+------------------------------------------------------------
+INSTALACIÓN
+------------------------------------------------------------
 
-# Instalación
+1. CLONAR REPOSITORIO
 
-## 1. Instalar dependencias
+git clone https://github.com/Edwward2/chatwoot-osticket-integration.git
+cd chatwoot-osticket-integration
 
-```bash
+------------------------------------------------------------
+
+2. INSTALAR DEPENDENCIAS
+
 cd integration-service
 npm install
-```
 
----
+------------------------------------------------------------
 
-## 2. Iniciar Integration Service
+3. INICIAR SERVICIO
 
-```bash
 node server.js
-```
 
----
+------------------------------------------------------------
 
-## 3. Configurar Webhook en Chatwoot
+CHATWOOT (REQUERIDO PARA PRUEBAS)
+
+git clone https://github.com/chatwoot/chatwoot.git
+cd chatwoot
+docker compose -f docker-compose.production.yaml up -d
+
+Acceso:
+http://localhost:3000
+
+------------------------------------------------------------
+
+OSTICKET (DOCKER)
+
+cd Osticket
+docker compose up -d
+
+Acceso:
+http://localhost:8080
+
+------------------------------------------------------------
+CONFIGURACIÓN WEBHOOK CHATWOOT
+------------------------------------------------------------
 
 URL:
 
-```text
 http://TU_IP:3001/webhook
-```
 
-Eventos:
+EVENTOS:
 
 - conversation_updated
 - conversation_status_changed
 
----
-
-# Flujo de funcionamiento
+------------------------------------------------------------
+FLUJO DEL SISTEMA
+------------------------------------------------------------
 
 1. Cliente inicia conversación en Chatwoot
-2. Chatwoot envía webhook
-3. server.js procesa mensajes
-4. Se construye transcript
-5. Al resolver conversación:
-   - sender.js envía ticket a osTicket
-6. osTicket crea ticket automáticamente
+2. Chatwoot envía eventos vía Webhook
+3. server.js recibe y procesa la conversación
+4. Se construye un transcript limpio
+5. Cuando la conversación se resuelve:
+6. sender.js envía datos a osTicket
+7. osTicket crea el ticket automáticamente
 
----
+------------------------------------------------------------
+EJEMPLO DE TRANSCRIPT
+------------------------------------------------------------
 
-# Ejemplo de transcript
-
-```text
 [Agente]
-Hola en qué puedo ayudarle
+Hola, ¿en qué puedo ayudarte?
 
 [Cliente]
 Necesito soporte
 
 [Agente]
-Claro, revisaremos su caso
-```
+Claro, revisaremos tu caso
 
----
+------------------------------------------------------------
+API OSTICKET
+------------------------------------------------------------
 
-# API osTicket utilizada
+ENDPOINT:
 
-Endpoint:
-
-```text
 POST /api/tickets.json
-```
 
-Payload:
+PAYLOAD:
 
-```json
 {
   "name": "Cliente",
   "email": "cliente@test.com",
@@ -188,41 +198,58 @@ Payload:
   "topicId": 1,
   "source": "API"
 }
-```
 
----
+------------------------------------------------------------
+ESTADO ACTUAL
+------------------------------------------------------------
 
-# Estado actual
+FUNCIONAL:
 
-## Funcional
-
-- Recepción de webhooks
+- Webhooks desde Chatwoot
 - Normalización de mensajes
+- Filtrado de mensajes automáticos
 - Construcción de transcript
 - Envío automático a osTicket
-- Creación automática de tickets
+- Creación de tickets
 
----
+------------------------------------------------------------
+PRÓXIMAS MEJORAS
+------------------------------------------------------------
 
-# Próximas mejoras
-
-- Limpieza avanzada de mensajes
-- Evitar tickets duplicados
 - Persistencia en base de datos
-- Dockerización del integration-service
-- PM2 para producción
-- Logs estructurados
+- Evitar tickets duplicados
 - Retry automático
-- Validación avanzada
+- Logs estructurados
+- Dockerización del servicio
+- Sistema de colas
+- Deploy en producción
 
----
+------------------------------------------------------------
+COMPATIBILIDAD
+------------------------------------------------------------
 
-# Desarrollo
+- Linux
+- Windows (Docker Desktop)
+- macOS
+- WSL2
 
-Proyecto desarrollado para automatizar la integración entre plataformas de atención y mesa de ayuda.
+------------------------------------------------------------
+PROPÓSITO DEL PROYECTO
+------------------------------------------------------------
 
----
+Este sistema fue desarrollado como integración real entre plataformas de atención al cliente y sistemas de ticketing.
 
-# Licencia
+Demuestra habilidades en:
 
-Uso interno / privado.
+- Node.js backend
+- APIs REST
+- Webhooks
+- Arquitectura de integración
+- Automatización de procesos
+- Sistemas reales empresariales
+
+------------------------------------------------------------
+LICENCIA
+------------------------------------------------------------
+
+Uso personal / portafolio de demostración
