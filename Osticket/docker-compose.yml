@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  osticket:
+    image: devinsolutions/osticket
+    container_name: osticket
+    ports:
+      - "8080:80"
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: osticket
+      MYSQL_USER: osticket
+      MYSQL_PASSWORD: osticket
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:5.7
+    container_name: osticket_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: osticket
+      MYSQL_USER: osticket
+      MYSQL_PASSWORD: osticket
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

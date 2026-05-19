@@ -1,0 +1,147 @@
+Guía rápida de arranque y prueba Chatwoot + osTicket
+
+🔹 CHATWOOT
+
+1. Abrir terminal y entrar al proyecto
+cd ~/Escritorio/proyecto_chatwoot/chatwoot
+
+2. Levantar servicios
+docker compose -f docker-compose.production.yaml up -d
+
+3. Verificar contenedores
+docker ps
+
+4. Preparar base de datos (solo si es necesario)
+docker compose -f docker-compose.production.yaml run --rm rails bundle exec rails db:prepare
+
+5. Abrir panel de agente
+Navegador:
+http://localhost:3000
+
+6. Login agente
+Usuario admin o agente
+Ir a: Conversations
+
+7. Abrir chat como usuario (HTML)
+Terminal (fuera de chatwoot): cd ~/Escritorio/proyecto_chatwoot
+python3 -m http.server 8081
+Luego abre:
+
+http://localhost:8081/test_chat.html
+
+8. Prueba de flujo
+
+Usuario (HTML):
+
+Escribe mensaje
+
+Agente (panel):
+
+Recibe mensaje
+Responde
+9. Cerrar conversación
+
+Panel agente:
+
+Click en "Resolve" o "Close"
+10. Validación Chatwoot
+
+Debe cumplirse:
+
+Chat visible
+Mensajes llegan
+Agente responde
+Conversación se cierra
+Historial guardado
+
+11. Logs Chatwoot (si falla)
+docker logs chatwoot-rails-1
+OSTICKET
+
+12. Abrir terminal y entrar al proyecto
+cd ~/Escritorio/proyecto_chatwoot/Osticket
+
+13. Levantar servicios
+docker compose up -d
+
+14. Verificar contenedores
+docker ps
+
+15. Acceso sistema usuario
+
+Navegador:
+
+http://localhost:8080
+
+16. Acceso panel agente/admin
+http://localhost:8080/scp/login.php
+
+Usuario:
+
+ostadmin
+Password:
+(la que configuraste)
+
+17. Validar sistema
+Crear ticket manual desde:
+Open a New Ticket
+Ver tickets en:
+http://localhost:8080/scp/tickets.php
+
+18. Activar API (OBLIGATORIO)
+
+Ruta:
+
+Admin Panel → Manage → API Keys
+
+Configurar:
+
+IP: 0.0.0.0
+✔ Can Create Tickets → ON
+
+19. Probar API (desde terminal local)
+curl -X POST "http://localhost:8080/api/tickets.json" \
+  -H "X-API-Key: TU_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Usuario Prueba","email":"test@demo.com","subject":"Prueba desde API","message":"Test desde integración"}'
+
+20. Validación osTicket
+
+Debe cumplirse:
+
+Ticket se crea automáticamente
+Aparece en panel de agente
+21. Logs osTicket (si falla)
+docker logs osticket
+ FLUJO COMPLETO (CHATWOOT → OSTICKET)
+
+22. Flujo esperado
+Usuario escribe en Chatwoot (HTML)
+Agente responde en Chatwoot
+Agente cierra conversación
+(Luego integrar webhook)
+Se crea ticket en osTicket
+ APAGAR TODO
+
+23. Apagar Chatwoot
+cd ~/Escritorio/proyecto_chatwoot/chatwoot
+docker compose -f docker-compose.production.yaml down
+
+24. Apagar osTicket
+cd ~/Escritorio/proyecto_chatwoot/Osticket
+docker compose down
+
+
+
+curl funiona osticket terminal
+curl -X POST http://localhost:8080/api/tickets.json \
+-H "X-API-Key: 288DE964A557831A0697F47138F492DA" \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Test User",
+  "email": "test@test.com",
+  "subject": "Prueba API",
+  "message": "Mensaje desde terminal correctamente",
+  "topicId": 1,
+  "source": "API"
+}'
