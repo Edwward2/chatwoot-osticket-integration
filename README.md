@@ -33,7 +33,6 @@ La carpeta chatwoot/ no se incluye completamente en este repositorio debido a qu
 
 Este repositorio se enfoca específicamente en el desarrollo del Integration Service encargado de conectar Chatwoot con osTicket mediante Webhooks y API REST.
 
-Para ejecutar el entorno completo, se debe utilizar una instalación oficial de Chatwoot junto con este servicio de integración.
 ---
 
 ## osTicket
