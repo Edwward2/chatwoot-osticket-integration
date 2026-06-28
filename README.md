@@ -6,16 +6,13 @@ Este proyecto implementa un servicio de integración en tiempo real que recibe e
 
 ------------------------------------------------------------
 ARQUITECTURA
-------------------------------------------------------------
 
 Chatwoot → Webhook → Node.js Integration Service → osTicket API
 
 ------------------------------------------------------------
 COMPONENTES
-------------------------------------------------------------
 
 CHATWOOT
-
 Sistema principal de atención por chat.
 
 Sitio oficial:
@@ -23,7 +20,6 @@ https://www.chatwoot.com
 
 NOTA IMPORTANTE:
 La carpeta chatwoot/ no está incluida completamente en este repositorio.
-
 Esto se debe a que Chatwoot es un sistema completo con múltiples servicios Docker, dependencias pesadas y su propio repositorio oficial:
 
 https://github.com/chatwoot/chatwoot
@@ -33,7 +29,6 @@ Este proyecto se enfoca únicamente en la integración personalizada entre Chatw
 ------------------------------------------------------------
 
 OSTICKET
-
 Sistema de tickets utilizado como backend de soporte.
 
 Sitio oficial:
@@ -42,11 +37,9 @@ https://osticket.com
 ------------------------------------------------------------
 
 INTEGRATION SERVICE (NODE.JS)
-
 Servicio principal del proyecto.
 
 Responsable de:
-
 - Recibir webhooks desde Chatwoot
 - Normalizar y sanitizar mensajes
 - Construir transcript de conversación
@@ -54,13 +47,11 @@ Responsable de:
 - Enviar ticket a osTicket vía API REST
 
 Archivos principales:
-
 - server.js
 - sender.js
 
 ------------------------------------------------------------
 ESTRUCTURA DEL PROYECTO
-------------------------------------------------------------
 
 proyecto_chatwoot/
 
@@ -79,7 +70,6 @@ proyecto_chatwoot/
 
 ------------------------------------------------------------
 REQUISITOS
-------------------------------------------------------------
 
 - Node.js 18+
 - Docker
@@ -88,43 +78,30 @@ REQUISITOS
 
 ------------------------------------------------------------
 VARIABLES DE ENTORNO
-------------------------------------------------------------
 
 Ubicación:
-
 integration-service/.env
 
 Contenido:
-
 PORT=3001
 OSTICKET_API_KEY=TU_API_KEY
 
 ------------------------------------------------------------
 INSTALACIÓN
-------------------------------------------------------------
 
 1. CLONAR REPOSITORIO
-
 git clone https://github.com/Edwward2/chatwoot-osticket-integration.git
 cd chatwoot-osticket-integration
 
-------------------------------------------------------------
-
 2. INSTALAR DEPENDENCIAS
-
 cd integration-service
 npm install
 
-------------------------------------------------------------
-
 3. INICIAR SERVICIO
-
 node server.js
 
-------------------------------------------------------------
 
 CHATWOOT (REQUERIDO PARA PRUEBAS)
-
 git clone https://github.com/chatwoot/chatwoot.git
 cd chatwoot
 docker compose -f docker-compose.production.yaml up -d
@@ -135,7 +112,6 @@ http://localhost:3000
 ------------------------------------------------------------
 
 OSTICKET (DOCKER)
-
 cd Osticket
 docker compose up -d
 
@@ -144,20 +120,16 @@ http://localhost:8080
 
 ------------------------------------------------------------
 CONFIGURACIÓN WEBHOOK CHATWOOT
-------------------------------------------------------------
 
 URL:
-
 http://TU_IP:3001/webhook
 
 EVENTOS:
-
 - conversation_updated
 - conversation_status_changed
 
 ------------------------------------------------------------
 FLUJO DEL SISTEMA
-------------------------------------------------------------
 
 1. Cliente inicia conversación en Chatwoot
 2. Chatwoot envía eventos vía Webhook
@@ -169,7 +141,6 @@ FLUJO DEL SISTEMA
 
 ------------------------------------------------------------
 EJEMPLO DE TRANSCRIPT
-------------------------------------------------------------
 
 [Agente]
 Hola, ¿en qué puedo ayudarte?
@@ -182,14 +153,11 @@ Claro, revisaremos tu caso
 
 ------------------------------------------------------------
 API OSTICKET
-------------------------------------------------------------
 
 ENDPOINT:
-
 POST /api/tickets.json
 
 PAYLOAD:
-
 {
   "name": "Cliente",
   "email": "cliente@test.com",
@@ -201,10 +169,8 @@ PAYLOAD:
 
 ------------------------------------------------------------
 ESTADO ACTUAL
-------------------------------------------------------------
 
 FUNCIONAL:
-
 - Webhooks desde Chatwoot
 - Normalización de mensajes
 - Filtrado de mensajes automáticos
@@ -213,20 +179,7 @@ FUNCIONAL:
 - Creación de tickets
 
 ------------------------------------------------------------
-PRÓXIMAS MEJORAS
-------------------------------------------------------------
-
-- Persistencia en base de datos
-- Evitar tickets duplicados
-- Retry automático
-- Logs estructurados
-- Dockerización del servicio
-- Sistema de colas
-- Deploy en producción
-
-------------------------------------------------------------
 COMPATIBILIDAD
-------------------------------------------------------------
 
 - Linux
 - Windows (Docker Desktop)
@@ -235,21 +188,13 @@ COMPATIBILIDAD
 
 ------------------------------------------------------------
 PROPÓSITO DEL PROYECTO
-------------------------------------------------------------
 
 Este sistema fue desarrollado como integración real entre plataformas de atención al cliente y sistemas de ticketing.
 
 Demuestra habilidades en:
-
 - Node.js backend
 - APIs REST
 - Webhooks
 - Arquitectura de integración
 - Automatización de procesos
 - Sistemas reales empresariales
-
-------------------------------------------------------------
-LICENCIA
-------------------------------------------------------------
-
-Uso personal / portafolio de demostración
